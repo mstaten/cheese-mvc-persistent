@@ -9,9 +9,7 @@
 <nav th:replace="fragments :: navigation"></nav>
 
 <p th:unless="${cheeses} and ${cheeses.size()}">no cheese :(</p>
-
-
-<table class="table">
+<table th:if="${cheeses} and ${cheeses.size()}" class="table">
 
     <tr>
         <th>Name</th>
