@@ -11,10 +11,10 @@
 
     <input th:field="*{description}" placeholder="cheese desc" />
 
-    <select th:field="*{type}">
-        <option th:each="cheeseType : ${cheeseTypes}"
-                th:text="${cheeseType.name}"
-                th:value="${cheeseType}">
+    <select name="categoryId">
+        <option th:each="category : ${categories}"
+                th:text="${category.name}"
+                th:value="${category.id}">
         </option>
     </select>
 
