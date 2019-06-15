@@ -44,7 +44,7 @@ public class CheeseController {
     }
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
-    public String processAddCheeseForm(@ModelAttribute  @Valid Cheese newCheese,
+    public String processAddCheeseForm(@ModelAttribute @Valid Cheese newCheese,
                                        Errors errors, Model model,
                                        @RequestParam int categoryId) {
 
@@ -86,6 +86,45 @@ public class CheeseController {
         model.addAttribute("cheeses", cheeses);
         model.addAttribute("title", title);
         return "cheese/index";
+    }
+
+    @RequestMapping(value = "edit/{cheeseId}", method = RequestMethod.GET)
+    public String displayEditForm(Model model, @PathVariable int cheeseId) {
+
+        Cheese cheese = cheeseDao.findOne(cheeseId);
+        String title = "Edit cheese " + cheese.getName();
+        Category autoSelectCategory = cheese.getCategory();
+
+        model.addAttribute("categories", categoryDao.findAll());
+        model.addAttribute("cheese", cheese);
+        model.addAttribute("title", title);
+        model.addAttribute("autoSelectCategory", autoSelectCategory);
+        return "cheese/edit";
+    }
+
+    @RequestMapping(value = "edit", method = RequestMethod.POST)
+    public String processEditForm(@ModelAttribute @Valid Cheese modelCheese,
+                                  Errors errors, Integer id) {
+        // check for errors
+        if (errors.hasErrors()) {
+            return "redirect:/cheese/edit/" + modelCheese.getId();
+        }
+
+        // find cheese to be edited
+        Cheese theCheese = cheeseDao.findOne(id);
+        // save edits
+        /*theCheese.setCategory(modelCheese.getCategory());
+        theCheese.setName(modelCheese.getName());
+        theCheese.setDescription(modelCheese.getDescription());
+        */
+        // try just setting theCheese equal to modelCheese
+        theCheese.setName(modelCheese.getName());
+        theCheese.setDescription(modelCheese.getDescription());
+        theCheese.setCategory(modelCheese.getCategory());
+
+        // edit fields
+        cheeseDao.save(theCheese);
+        return "redirect:";
     }
 
 }

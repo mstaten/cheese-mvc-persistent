@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head th:replace="fragments :: head"></head>
+
+<body class="container">
+
+<h1 th:text="${title}">Default Title</h1>
+
+<nav th:replace="fragments :: navigation"></nav>
+
+
+<form method="post" action="/cheese/edit" style="max-width:600px;" th:object="${cheese}" class="form-inline">
+    <input th:field="*{name}" th:placeholder="*{name}" />
+
+    <input th:field="*{description}" th:placeholder="*{description}" />
+
+    <select th:field="*{category}" name="categoryId">
+        <option th:each="category : ${categories}"
+                th:text="${category.name}"
+                th:value="${category.id}"
+                th:selected="${category.equals(autoSelectedCategory)}">
+        </option>
+    </select>
+
+    <input type="submit" value="Edit Cheese" class="btn btn-warning"/>
+    <input type="hidden" th:field="*{id}" name="id" th:value="*{id}"/>
+
+    <div>
+        <p th:errors="*{name}" class="error"></p>
+        <p th:errors="*{description}" class="error"></p>
+    </div>
+</form>
+
+</body>
+</html>
