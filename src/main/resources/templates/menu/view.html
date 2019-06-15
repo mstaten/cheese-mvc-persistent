@@ -11,8 +11,9 @@
         <p th:unless="${menu.cheeses} and ${menu.cheeses.size()}" > no cheeses :( </p>
 
         <ul>
-            <li th:each="cheese : ${menu.cheeses}" th:text="${cheese.name}"></li>
+            <li th:each="cheese : ${menu.cheeses}"><a th:href="@{'/cheese/edit/' + ${cheese.id}}" th:text="${cheese.name}"></a></li>
         </ul>
+
         <p><a th:href="'/menu/add-item/' + ${menu.id}">Add a Cheese</a></p>
 
     </body>
