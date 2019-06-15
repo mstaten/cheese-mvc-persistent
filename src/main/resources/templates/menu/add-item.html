@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+    <head th:replace="fragments :: head"></head>
+    <body class="container">
+        <h1 th:text="${title}">Default Title</h1>
+
+        <nav th:replace="fragments :: navigation"></nav>
+
+        <form method="post" style="max-width:600px;" th:object="${form}" class="form-inline" action="/menu/add-item" >
+
+            <select name="cheeseId">
+                <option th:each="cheese : ${form.cheeses}" th:value="${cheese.id}" th:text="${cheese.name}"></option>
+            </select>
+
+            <input type="submit" value="Add Cheese" class="btn btn-warning"/>
+
+            <input type="hidden" name="menuId" th:value="*{menu.id}" />
+            <span>
+                <p th:errors="*{cheeses}" class="error"></p>
+            </span>
+        </form>
+
+
+    </body>
+</html>
