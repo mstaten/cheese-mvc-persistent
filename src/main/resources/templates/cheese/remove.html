@@ -13,12 +13,22 @@
         <form method="post" th:if="${cheeses} and ${cheeses.size()}">
 
             <div th:each="cheese : ${cheeses}" class="checkbox">
-                <input type="checkbox" name="cheeseIds" th:value="${cheese.id}" th:id="${cheese.id}"/>
+                <input type="checkbox"
+                       name="cheeseIds"
+                       th:value="${cheese.id}"
+                       th:id="${cheese.id}"/>
                 <label th:for="${cheese.id}" th:text="${cheese.name}"></label>
                 <br />
             </div>
             <div>
                 <input type="submit" value="Remove Cheese" class="btn btn-warning" />
+                <label>
+                    <input type="hidden"
+                           name="cheeseIds"
+                           th:value="${checkedId}"
+                           th:id="${checkedId}"
+                           th:checked="checked"/>
+                </label>
             </div>
         </form>
 
