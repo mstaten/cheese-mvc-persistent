@@ -81,29 +81,11 @@ public class CheeseController {
 
     @RequestMapping(value = "remove", method = RequestMethod.POST)
     public String processRemoveCheeseForm(@RequestParam int[] cheeseIds) {
+
         // iterate over checked cheeses from the form
         for (int cheeseId : cheeseIds) {
-            if (cheeseId != 0) { // 0 is the default; see displayRemoveCheeseForm
-
-                // some issue w/ bulk delete on the owning side
-                // of a many-to-many relation ---> means:
-                // must delete cheese from menus before completely deleting cheese
-
-                // iterate through all menus
-                for (Menu menu : menuDao.findAll()) {
-
-                    // iterate through cheeses of current menu
-                    List<Cheese> someCheeses = menu.getCheeses();
-                    for (int i = 0; i < someCheeses.size(); i++) {
-
-                        // check current cheese's id against @RequestParam cheeseId
-                        if (someCheeses.get(i).getId() == cheeseId) {
-                            menu.removeItem(someCheeses.get(i));
-                        }
-                    }
-                }
-
-                // only now may you delete the cheese
+            if (cheeseId != 0) {
+                // 0 is the default; see displayRemoveCheeseForm
                 cheeseDao.delete(cheeseId);
             }
         }

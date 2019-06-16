@@ -26,7 +26,7 @@ public class Cheese {
     @ManyToOne
     private Category category;
 
-    @ManyToMany(mappedBy = "cheeses")
+    @ManyToMany(mappedBy = "cheeses", cascade=CascadeType.ALL)
     private List<Menu> menus;
 
     public Cheese(String name, String description) {
