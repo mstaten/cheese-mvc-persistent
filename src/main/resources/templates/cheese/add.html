@@ -6,7 +6,8 @@
 
 <nav th:replace="fragments :: navigation"></nav>
 
-<form method="post" style="max-width:600px;" th:object="${cheese}" class="form-inline">
+<form method="post" style="max-width:600px;" th:object="${cheese}" class="form-inline"
+      th:if="${categories} and ${categories.size()}"  >
     <input th:field="*{name}" placeholder="cheese name" />
 
     <input th:field="*{description}" placeholder="cheese desc" />
@@ -25,6 +26,10 @@
         <p th:errors="*{description}" class="error"></p>
     </div>
 </form>
+
+<p th:unless="${categories} and ${categories.size()}" >There are no categories! You must
+    <a th:href="@{/category/add}" >add a category</a>
+    before adding a cheese.</p>
 
 
 </body>
