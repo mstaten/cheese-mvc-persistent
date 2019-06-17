@@ -44,7 +44,7 @@ public class CheeseController {
     public String displayAddCheeseForm(Model model) {
 
         model.addAttribute("title", "Add Cheese");
-        model.addAttribute(new Cheese());
+        model.addAttribute(new Cheese()); // pass in cheese to bind to form
         model.addAttribute("categories", categoryDao.findAll());
 
         return "cheese/add";
@@ -57,9 +57,11 @@ public class CheeseController {
 
         if (errors.hasErrors()) {
             model.addAttribute("title", "Add Cheese");
+            model.addAttribute("categories", categoryDao.findAll());
             return "cheese/add";
         }
 
+        // find category with given id, set category of newCheese, save newCheese
         Category cat = categoryDao.findOne(categoryId);
         newCheese.setCategory(cat);
         cheeseDao.save(newCheese);
@@ -96,7 +98,10 @@ public class CheeseController {
     @RequestMapping(value = "category/{categoryId}", method = RequestMethod.GET)
     public String category(Model model, @PathVariable int categoryId) {
 
+        // find category with given id
         Category theCategory = categoryDao.findOne(categoryId);
+
+        // find all cheeses in this category
         Iterable<Cheese> cheeses = theCategory.getCheeses();
         String title = "Cheeses in the '" + theCategory.getName() + "' category";
 
@@ -109,10 +114,15 @@ public class CheeseController {
     @RequestMapping(value = "edit/{cheeseId}", method = RequestMethod.GET)
     public String displayEditForm(Model model, @PathVariable int cheeseId) {
 
+        // find cheese w/given id
         Cheese cheese = cheeseDao.findOne(cheeseId);
-        String title = "Edit cheese " + cheese.getName();
-        Category autoSelectCategory = cheese.getCategory();
 
+        // autoselect current cheese's category
+        Category autoSelectCategory = cheese.getCategory();
+        String title = "Edit cheese " + cheese.getName();
+
+        // id needs to be persistent (otherwise causes problems when processing form w/errors
+        model.addAttribute("id", cheeseId);
         model.addAttribute("categories", categoryDao.findAll());
         model.addAttribute("cheese", cheese);
         model.addAttribute("title", title);
@@ -123,10 +133,30 @@ public class CheeseController {
 
     @RequestMapping(value = "edit", method = RequestMethod.POST)
     public String processEditForm(@ModelAttribute @Valid Cheese modelCheese,
-                                  Errors errors, int id) {
+                                  Errors errors, int id, Model model) {
 
         if (errors.hasErrors()) {
-            return "redirect:/cheese/edit/" + id;
+            // find cheese w/given id already saved in cheeseDao
+            Cheese origCheese = cheeseDao.findOne(id);
+
+            // need modelCheese added to model since it has errors attached
+            // but set name and desc for modelCheese to those of origCheese
+            modelCheese.setName(origCheese.getName());
+            modelCheese.setDescription(origCheese.getDescription());
+            model.addAttribute("cheese", modelCheese);
+
+            // want the category drop-down menu to be auto-selected on cheese's current category
+            Category autoSelectCategory = modelCheese.getCategory();
+            String title = "Edit cheese " + modelCheese.getName();
+
+            // id needs to be persistent
+            model.addAttribute("id", id);
+            // Q: does this allow id to always appear as actual cheese's id??
+
+            model.addAttribute("categories", categoryDao.findAll());
+            model.addAttribute("title", title);
+            model.addAttribute("autoSelectCategory", autoSelectCategory);
+            return "cheese/edit";
         }
 
         // find cheese to be edited

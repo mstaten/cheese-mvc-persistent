@@ -23,7 +23,7 @@
     </select>
 
     <input type="submit" value="Save Edits" class="btn btn-warning"/>
-    <input type="hidden" th:field="*{id}" name="id" th:value="*{id}"/>
+    <input type="hidden" name="id" th:value="${id}"/>
 
     <div>
         <p th:errors="*{name}" class="error"></p>
