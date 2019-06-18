@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org/">
     <head th:replace="fragments :: head"></head>
-    <body class="container">
+    <body class="container modal-body">
         <h1 th:text="${title}">Default Title</h1>
 
         <nav th:replace="fragments :: navigation"></nav>
@@ -9,20 +9,27 @@
         <form method="post" style="max-width:600px;" th:object="${form}" class="form-inline"
               action="/menu/add-item" th:if="${form.cheeses} and ${form.cheeses.size()}" >
 
-            <select name="cheeseId">
-                <option th:each="cheese : ${form.cheeses}" th:value="${cheese.id}" th:text="${cheese.name}"></option>
-            </select>
+            <label>
+                <select name="cheeseId">
+                    <option th:each="cheese : ${form.cheeses}" th:value="${cheese.id}" th:text="${cheese.name}"></option>
+                </select>
+            </label>
 
-            <input type="submit" value="Add Cheese" class="btn btn-warning"/>
+            <label>
+                <input type="submit" value="Add Cheese" class="btn btn-warning"/>
+            </label>
 
-            <input type="hidden" name="menuId" th:value="*{menu.id}" />
-            <span>
-                <p th:errors="*{cheeses}" class="error"></p>
-            </span>
+            <label>
+                <input type="hidden" name="menuId" th:value="*{menu.id}" />
+            </label>
+
+            <h5>
+                <small th:errors="*{cheeses}" class="alert alert-danger"></small>
+            </h5>
         </form>
 
         <p th:unless="${form.cheeses} and ${form.cheeses.size()}" >There are no cheeses in the database! You must first
-            <a th:href="@{/category/add}">add a cheese to the database</a> before adding one to a menu.</p>
+            <em><a th:href="@{/cheese/add}">add a cheese to the database</a></em> before adding one to a menu.</p>
 
 
     </body>

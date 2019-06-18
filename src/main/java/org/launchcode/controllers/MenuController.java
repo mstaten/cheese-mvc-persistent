@@ -68,7 +68,7 @@ public class MenuController {
 
         // find menu w/given id
         Menu menu = menuDao.findOne(menuId);
-
+        // get all cheeses
         Iterable<Cheese> cheeses = cheeseDao.findAll();
 
         // create menu form w/given menu and all possible cheeses
@@ -82,7 +82,7 @@ public class MenuController {
         return "menu/add-item";
     }
 
-    @RequestMapping(value = "/add-item", method = RequestMethod.POST)
+    @RequestMapping(value = "add-item", method = RequestMethod.POST)
     public String addItem(@ModelAttribute AddMenuItemForm form, Errors errors,
                           Model model) {
         if (errors.hasErrors()) {

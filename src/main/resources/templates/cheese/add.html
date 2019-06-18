@@ -1,35 +1,46 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org/">
 <head th:replace="fragments :: head"></head>
-<body class="container">
-<h1 th:text="${title}">Default Title</h1>
+<body class="container modal-body">
+    <h1 th:text="${title}">Default Title</h1>
 
-<nav th:replace="fragments :: navigation"></nav>
+    <nav th:replace="fragments :: navigation"></nav>
 
-<form method="post" style="max-width:600px;" th:object="${cheese}" class="form-inline"
-      th:if="${categories} and ${categories.size()}"  >
-    <input th:field="*{name}" placeholder="cheese name" />
+    <form method="post" style="max-width:600px;" th:object="${cheese}"
+          th:if="${categories} and ${categories.size()}"  >
+        <label>
+            <input th:field="*{name}" placeholder="cheese name" autofocus="autofocus" onfocus="this.select()" />
+        </label>
 
-    <input th:field="*{description}" placeholder="cheese desc" />
+        <label>
+            <input th:field="*{description}" placeholder="cheese desc" />
+        </label>
 
-    <select name="categoryId">
-        <option th:each="category : ${categories}"
-                th:text="${category.name}"
-                th:value="${category.id}">
-        </option>
-    </select>
+        <label>
+            <select name="categoryId">
+                <option th:each="category : ${categories}"
+                        th:text="${category.name}"
+                        th:value="${category.id}">
+                </option>
+            </select>
+        </label>
 
-    <input type="submit" value="Add Cheese" class="btn btn-warning"/>
+        <label>
+            <input type="submit" value="Add Cheese" class="btn btn-warning"/>
+        </label>
+        <br />
 
-    <div>
-        <p th:errors="*{name}" class="error"></p>
-        <p th:errors="*{description}" class="error"></p>
-    </div>
-</form>
+        <div>
+            <br />
+            <h5><small th:errors="*{name}" class="alert alert-danger"></small></h5>
+            <br />
+            <h5><small th:errors="*{description}" class="alert alert-warning"></small></h5>
+        </div>
+    </form>
 
-<p th:unless="${categories} and ${categories.size()}" >There are no categories! You must
-    <a th:href="@{/category/add}" >add a category</a>
-    before adding a cheese.</p>
+    <p th:unless="${categories} and ${categories.size()}" >There are no categories! You must
+        <a th:href="@{/category/add}" >add a category</a>
+        before adding a cheese.</p>
 
 
 </body>

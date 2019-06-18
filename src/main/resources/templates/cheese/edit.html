@@ -2,34 +2,45 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org/">
 <head th:replace="fragments :: head"></head>
 
-<body class="container">
+<body class="container modal-body">
 
-<h1 th:text="${title}">Default Title</h1>
+    <h1 th:text="${title}">Default Title</h1>
 
-<nav th:replace="fragments :: navigation"></nav>
+    <nav th:replace="fragments :: navigation"></nav>
 
 
-<form method="post" action="/cheese/edit" style="max-width:600px;" th:object="${cheese}" class="form-inline">
-    <input th:field="*{name}" th:placeholder="*{name}" />
+    <form method="post" action="/cheese/edit" style="max-width:600px;" th:object="${cheese}" class="form-inline">
+        <label>
+            <input th:field="*{name}" th:placeholder="*{name}" autofocus="autofocus" onfocus="this.select()" />
+        </label>
 
-    <input th:field="*{description}" th:placeholder="*{description}" />
+        <label>
+            <input th:field="*{description}" th:placeholder="*{description}" />
+        </label>
 
-    <select th:field="*{category}" name="categoryId">
-        <option th:each="category : ${categories}"
-                th:text="${category.name}"
-                th:value="${category.id}"
-                th:selected="${category.equals(autoSelectedCategory)}">
-        </option>
-    </select>
+        <label>
+            <select th:field="*{category}" name="categoryId">
+                <option th:each="category : ${categories}"
+                        th:text="${category.name}"
+                        th:value="${category.id}"
+                        th:selected="${category.equals(autoSelectedCategory)}">
+                </option>
+            </select>
+        </label>
 
-    <input type="submit" value="Save Edits" class="btn btn-warning"/>
-    <input type="hidden" name="id" th:value="${id}"/>
+        <label>
+            <input type="submit" value="Save Edits" class="btn btn-warning"/>
+        </label>
 
-    <div>
-        <p th:errors="*{name}" class="error"></p>
-        <p th:errors="*{description}" class="error"></p>
-    </div>
-</form>
+        <input type="hidden" name="id" th:value="${id}"/>
+
+        <div>
+            <br />
+            <h5><small th:errors="*{name}" class="alert alert-danger"></small></h5>
+            <br />
+            <h5><small th:errors="*{description}" class="alert alert-warning"></small></h5>
+        </div>
+    </form>
 
 </body>
 </html>

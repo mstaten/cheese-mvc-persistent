@@ -62,8 +62,9 @@ public class CheeseController {
         }
 
         // find category with given id, set category of newCheese, save newCheese
-        Category cat = categoryDao.findOne(categoryId);
-        newCheese.setCategory(cat);
+        // Category cat = categoryDao.findOne(categoryId);
+        // CHANGE
+        newCheese.setCategory(categoryDao.findOne(categoryId));
         cheeseDao.save(newCheese);
         return "redirect:";
     }
@@ -117,11 +118,11 @@ public class CheeseController {
         // find cheese w/given id
         Cheese cheese = cheeseDao.findOne(cheeseId);
 
-        // autoselect current cheese's category
+        // auto-select current cheese's category on category drop-down menu
         Category autoSelectCategory = cheese.getCategory();
         String title = "Edit cheese " + cheese.getName();
 
-        // id needs to be persistent (otherwise causes problems when processing form w/errors
+        // id needs to be persistent (otherwise causes problems when processing form w/errors)
         model.addAttribute("id", cheeseId);
         model.addAttribute("categories", categoryDao.findAll());
         model.addAttribute("cheese", cheese);
@@ -140,19 +141,17 @@ public class CheeseController {
             Cheese origCheese = cheeseDao.findOne(id);
 
             // need modelCheese added to model since it has errors attached
-            // but set name and desc for modelCheese to those of origCheese
+            // but set name and desc of modelCheese to those of origCheese
             modelCheese.setName(origCheese.getName());
             modelCheese.setDescription(origCheese.getDescription());
             model.addAttribute("cheese", modelCheese);
 
-            // want the category drop-down menu to be auto-selected on cheese's current category
+            // auto-select current cheese's category on category drop-down menu
             Category autoSelectCategory = modelCheese.getCategory();
             String title = "Edit cheese " + modelCheese.getName();
 
             // id needs to be persistent
             model.addAttribute("id", id);
-            // Q: does this allow id to always appear as actual cheese's id??
-
             model.addAttribute("categories", categoryDao.findAll());
             model.addAttribute("title", title);
             model.addAttribute("autoSelectCategory", autoSelectCategory);
