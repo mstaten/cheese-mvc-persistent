@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head th:replace="fragments :: head"></head>
+
+<body class="container modal-body">
+
+<h1 th:text="${title}">Default Title</h1>
+
+<nav th:replace="fragments :: navigation"></nav>
+
+<p th:unless="${users} and ${users.size()}">no users :(</p>
+<table th:if="${users} and ${users.size()}" class="table">
+
+    <tr>
+        <th>Username</th>
+        <th>User Email</th>
+    </tr>
+
+    <tr th:each="user : ${users}">
+        <td th:text="${user.username}"></td>
+        <td th:text="${user.email}"></td>
+    </tr>
+
+</table>
+<a href="/user/add">Add</a>
+
+</body>
+</html>
