@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<head th:replace="fragments :: head"></head>
+<body class="container modal-body">
+<h1 th:text="${title}">Default Title</h1>
+
+<nav th:replace="fragments :: navigation"></nav>
+
+<form method="post" style="max-width:600px;" th:object="${loginUsernameForm}" >
+
+    <label><input th:field="*{username}"   placeholder="username" autofocus="autofocus" onfocus="this.select()" /></label>
+    <label><input th:field="*{password}"   placeholder="password" type="password" /></label>
+
+    <label><input type="submit" value="Login" class="btn btn-warning"/></label>
+
+    <div>
+        <h5 th:if="${loginUsernameForm.customError} != null">
+            <br />
+            <small th:field="*{customError}" th:text="*{customError}" class="alert alert-danger"></small>
+        </h5>
+        <br />
+        <h5><small th:errors="*{username}"  class="alert alert-danger"></small></h5>
+        <br />
+        <h5><small th:errors="*{password}"  class="alert alert-warning"></small></h5>
+    </div>
+
+</form>
+<br />
+<p><a href="/user/login/email">Login with Email</a></p>
+
+</body>
+</html>

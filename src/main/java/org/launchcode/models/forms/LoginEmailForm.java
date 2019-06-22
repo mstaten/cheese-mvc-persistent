@@ -3,13 +3,13 @@ package org.launchcode.models.forms;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-public class LoginForm {
+public class LoginEmailForm {
 
-    // do i need user id?
+    //
 
     @NotNull
-    @Size(min=4, max=15, message = "Username must be between 4 and 15 characters")
-    private String username;
+    @Size(min=10, max = 30, message = "Email must be between 10 and 30 characters")
+    private String email;
 
     @NotNull
     @Size(min=4, max=15, message = "Password must be between 4 and 15 characters")
@@ -17,25 +17,25 @@ public class LoginForm {
 
     private String customError;
 
-    public LoginForm() {}
+    public LoginEmailForm() {}
 
-    public LoginForm(String username, String password) {
-        this.username = username;
+    public LoginEmailForm(String email, String password) {
+        this.email = email;
         this.password = password;
     }
 
-    public LoginForm(String username, String password, String customError) {
-        this.username = username;
+    public LoginEmailForm(String email, String password, String customError) {
+        this.email = email;
         this.password = password;
         this.customError = customError;
     }
 
-    public String getUsername() {
-        return username;
+    public String getEmail() {
+        return email;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setEmail(String email) {
+        this.email = email;
     }
 
     public String getPassword() {

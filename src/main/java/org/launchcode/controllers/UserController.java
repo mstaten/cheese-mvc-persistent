@@ -2,7 +2,8 @@ package org.launchcode.controllers;
 
 import org.launchcode.models.User;
 import org.launchcode.models.data.UserDao;
-import org.launchcode.models.forms.LoginForm;
+import org.launchcode.models.forms.LoginEmailForm;
+import org.launchcode.models.forms.LoginUsernameForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -54,16 +55,16 @@ public class UserController {
         return "redirect:";
     }
 
-    @RequestMapping(value = "login", method = RequestMethod.GET)
-    public String login(Model model) {
+    @RequestMapping(value = "login/username", method = RequestMethod.GET)
+    public String loginUsername(Model model) {
         model.addAttribute("title", "Login");
-        model.addAttribute("loginForm", new LoginForm());
-        return "user/login";
+        model.addAttribute("loginUsernameForm", new LoginUsernameForm());
+        return "user/loginUsername";
     }
 
-    @RequestMapping(value = "login", method = RequestMethod.POST)
-    public String login(@ModelAttribute @Valid LoginForm form, // form: LoginForm@8299
-                        Errors errors, Model model) {
+    @RequestMapping(value = "login/username", method = RequestMethod.POST)
+    public String loginUsername(@ModelAttribute @Valid LoginUsernameForm form,
+                                Errors errors, Model model) {
 
         // check for errors
         if (errors.hasErrors()) {
@@ -72,7 +73,7 @@ public class UserController {
             }
 
             model.addAttribute("title", "Login");
-            return "user/login";
+            return "user/loginUsername";
         }
 
         // get user by username, if username exists in database
@@ -82,12 +83,48 @@ public class UserController {
         if (thisUser == null || !form.getPassword().equals(thisUser.getPassword())) {
             form.setCustomError("No matching username and password");
             model.addAttribute("title", "Login");
-            return "user/login";
+            return "user/loginUsername";
         }
 
         // all correct
         // do something to keep user logged in
         return "redirect:";
+    }
+
+    @RequestMapping(value = "login/email", method = RequestMethod.GET)
+    public String loginEmail(Model model) {
+        model.addAttribute("title", "Login by Email");
+        model.addAttribute("loginEmailForm", new LoginEmailForm());
+        return "user/loginEmail";
+    }
+
+    @RequestMapping(value = "login/email", method = RequestMethod.POST)
+    public String loginEmail(@ModelAttribute @Valid LoginEmailForm form,
+                             Errors errors, Model model) {
+
+        // check for errors in errors obj
+        if (errors.hasErrors()) {
+            if (errors.hasFieldErrors("email")) {
+                form.setEmail("");
+            }
+
+            model.addAttribute("title", "Login by Email");
+            return "user/loginEmail";
+        }
+
+        // get user by email, if email exists in database
+        User thisUser = userDao.findByEmail(form.getEmail());
+
+        // check whether email exists, check for correct email-password combo
+        if (thisUser == null || !form.getPassword().equals(thisUser.getPassword())) {
+            form.setCustomError("No matching email and password");
+            model.addAttribute("title", "Login by Email");
+            return "user/loginEmail";
+        }
+
+        // else: correct email and password combo
+        // log user in
+        return "redirect:/user";
     }
 
 }
