@@ -1,13 +1,15 @@
 package org.launchcode.models;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.Serializable;
 
 @Entity
-public class User {
+public class User implements Serializable {
 
     @Id
     @GeneratedValue
@@ -22,12 +24,14 @@ public class User {
     private String email;
 
     @NotNull
-    @Size(min=4, max=15, message = "Password must be between 4 and 15 characters")
+    //@Size(min=4, max=15, message = "Password must be between 4 and 15 characters")
+    @Column(length = 60)
     private String password;
 
-    @NotNull(message = "Passwords don't match")
+    //@NotNull(message = "Passwords don't match")
     private String verify;
 
+    /** Constructors **/
     public User() {}
 
     public User(String username, String password) {
@@ -35,6 +39,13 @@ public class User {
         this.password = password;
     }
 
+    public User(String username, String password, String email) {
+        this.username = username;
+        this.password = password;
+        this.email = email;
+    }
+
+    /** Getters and Setters **/
     public String getUsername() {
         return username;
     }
@@ -78,4 +89,5 @@ public class User {
             setVerify(null);
         }
     }
+
 }

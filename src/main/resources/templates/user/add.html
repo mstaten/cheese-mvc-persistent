@@ -6,7 +6,7 @@
 
 <nav th:replace="fragments :: navigation"></nav>
 
-<form method="post" style="max-width:600px;" th:object="${user}" >
+<form method="post" style="max-width:600px;" th:object="${userDto}" >
 
     <label><input th:field="*{username}"    placeholder="username" autofocus="autofocus" onfocus="this.select()" /></label>
     <label><input th:field="*{email}"       placeholder="email" type="email" /></label>

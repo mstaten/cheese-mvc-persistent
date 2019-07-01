@@ -14,4 +14,6 @@ public interface UserDao extends CrudRepository<User, Integer> {
 
     public User findByEmail(String email);
 
+    @Override
+    void delete(User user);
 }

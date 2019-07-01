@@ -5,11 +5,15 @@
 <h1 th:text="${title}">Default Title</h1>
 
 <nav th:replace="fragments :: navigation"></nav>
+<p th:if="${logout}">You have been logged out</p>
 
 <form method="post" style="max-width:600px;" th:object="${loginEmailForm}" >
 
-    <label><input th:field="*{email}"   placeholder="email" autofocus="autofocus" onfocus="this.select()" /></label>
-    <label><input th:field="*{password}"   placeholder="password" type="password" /></label>
+    <label><input th:field="*{email}"       placeholder="email"     autofocus="autofocus" onfocus="this.select()" /></label>
+    <label><input th:field="*{password}"    placeholder="password"  type="password" /></label>
+    <input type="hidden"
+           name="${_csrf.parameterName}"
+           value="${_csrf.token}"/>
 
     <label><input type="submit" value="Login" class="btn btn-warning"/></label>
 
@@ -26,9 +30,8 @@
 
 </form>
 <br />
-<p><a href="/user/login/username">Login with Username</a></p>
-
-
+<span><a href="/user/login/username">Login with Username</a></span> |
+<span><a href="/user/add">Register new user</a></span>
 
 </body>
 </html>

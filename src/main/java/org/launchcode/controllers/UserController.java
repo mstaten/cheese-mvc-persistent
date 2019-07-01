@@ -2,8 +2,10 @@ package org.launchcode.controllers;
 
 import org.launchcode.models.User;
 import org.launchcode.models.data.UserDao;
+import org.launchcode.models.data.UserDto;
 import org.launchcode.models.forms.LoginEmailForm;
 import org.launchcode.models.forms.LoginUsernameForm;
+import org.launchcode.models.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -21,6 +23,9 @@ public class UserController {
     @Autowired
     private UserDao userDao;
 
+    @Autowired
+    private IUserService userService;
+
     @RequestMapping(value = "")
     public String index(Model model) {
         model.addAttribute("title","List of Users");
@@ -31,12 +36,12 @@ public class UserController {
     @RequestMapping(value = "add", method = RequestMethod.GET)
     public String add(Model model) {
         model.addAttribute("title", "Add User");
-        model.addAttribute(new User());
+        model.addAttribute(new UserDto());
         return "user/add";
     }
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
-    public String add(@ModelAttribute @Valid User user,
+    public String add(@ModelAttribute @Valid UserDto user,
                       Errors errors, Model model) {
 
         if (errors.hasErrors()) {
@@ -51,7 +56,9 @@ public class UserController {
             return "user/add";
         }
 
-        userDao.save(user);
+        final User newUser = userService.registerNewUser(user);
+
+        userDao.save(newUser);
         return "redirect:";
     }
 
@@ -81,13 +88,13 @@ public class UserController {
 
         // check whether username exists, check for correct username-password combo
         if (thisUser == null || !form.getPassword().equals(thisUser.getPassword())) {
-            form.setCustomError("No matching username and password");
+            form.setCustomError("Invalid username and password");
             model.addAttribute("title", "Login");
             return "user/loginUsername";
         }
 
         // all correct
-        // do something to keep user logged in
+        // do something HERE to keep user logged in
         return "redirect:";
     }
 
@@ -117,7 +124,7 @@ public class UserController {
 
         // check whether email exists, check for correct email-password combo
         if (thisUser == null || !form.getPassword().equals(thisUser.getPassword())) {
-            form.setCustomError("No matching email and password");
+            form.setCustomError("Invalid email and password");
             model.addAttribute("title", "Login by Email");
             return "user/loginEmail";
         }
