@@ -21,10 +21,17 @@
     <a href="/cheese">Cheeses</a> |
     <a href="/category">Categories</a> |
     <a href="/menu">Menus</a> |
-    <a href="/user">Users</a>
+    <a href="/user">Users</a> |
+    <a sec:authorize="!isAuthenticated()" href="/user/login/username">Login</a>
+    <a sec:authorize="isAuthenticated()" href="/user/logout">Logout
+        <form th:action="@{/user/logout}" method="post" th:hidden="true" >
+            <input type="submit" value="Logout" />
+        </form>
+    </a>
 </nav>
 
 <div th:fragment="authentication">
+    <div sec:authorize="isAuthenticated()">Text for authenticated users.</div>
     <div sec:authorize="hasRole('USER')">Text for a user.</div>
     <div sec:authorize="hasRole('ADMIN')">Text for an admin.</div>
 </div>
