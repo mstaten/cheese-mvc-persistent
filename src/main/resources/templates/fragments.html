@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org/">
+<html lang="en" xmlns:th="http://www.thymeleaf.org/" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity" >
 <head th:fragment="head">
     <meta charset="UTF-8"/>
     <title th:text="${title}">My Cheeses</title>
@@ -23,6 +23,11 @@
     <a href="/menu">Menus</a> |
     <a href="/user">Users</a>
 </nav>
+
+<div th:fragment="authentication">
+    <div sec:authorize="hasRole('USER')">Text for a user.</div>
+    <div sec:authorize="hasRole('ADMIN')">Text for an admin.</div>
+</div>
 
 </body>
 </html>
