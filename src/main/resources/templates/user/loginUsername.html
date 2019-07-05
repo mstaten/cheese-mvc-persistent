@@ -10,9 +10,6 @@
 
     <label><input th:field="*{username}"   placeholder="username" autofocus="autofocus" onfocus="this.select()" /></label>
     <label><input th:field="*{password}"   placeholder="password" type="password" /></label>
-    <input type="hidden"
-           name="${_csrf.parameterName}"
-           value="${_csrf.token}"/>
 
     <label><input type="submit" value="Login" class="btn btn-warning"/></label>
 

@@ -134,4 +134,16 @@ public class UserController {
         return "redirect:/user";
     }
 
+    @RequestMapping(value = "invalidSession")
+    public String invalidSession(Model model) {
+        model.addAttribute("title", "Invalid Session");
+        return "user/invalidSession";
+    }
+
+    @RequestMapping(value = "expiredSession")
+    public String expiredSession(Model model) {
+        model.addAttribute("title", "Expired Session");
+        return "user/expiredSession";
+    }
+
 }
