@@ -28,6 +28,8 @@ public class UserDto {
     @Size(min=4, max=15, message = "Username must be between 4 and 15 characters")
     private String username;
 
+    private Integer role;
+
     public UserDto() {}
 
     public UserDto(String password, String verify, String email) {
@@ -66,5 +68,13 @@ public class UserDto {
 
     public void setUsername(String username) {
         this.username = username;
+    }
+
+    public Integer getRole() {
+        return role;
+    }
+
+    public void setRole(Integer role) {
+        this.role = role;
     }
 }

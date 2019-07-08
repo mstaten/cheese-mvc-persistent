@@ -1,0 +1,73 @@
+package org.launchcode.config;
+
+import org.launchcode.models.Privilege;
+import org.launchcode.models.Role;
+import org.launchcode.models.data.PrivilegeDao;
+import org.launchcode.models.data.RoleDao;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
+import org.springframework.stereotype.Component;
+
+import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+
+@Component
+public class RoleSetup implements ApplicationListener<ContextRefreshedEvent> {
+
+    private boolean alreadySetup = false;
+
+    @Autowired
+    private RoleDao roleDao;
+
+    @Autowired
+    private PrivilegeDao privilegeDao;
+
+    // API
+
+
+    @Override
+    @Transactional
+    public void onApplicationEvent(final ContextRefreshedEvent event) {
+        if (alreadySetup) {
+            return;
+        }
+
+        // create initial privileges
+        final Privilege readPrivilege = createPrivilegeIfNotFound("READ_PRIVILEGE");
+        final Privilege writePrivilege = createPrivilegeIfNotFound("WRITE_PRIVILEGE");
+
+        // create initial roles
+        final List<Privilege> adminPrivileges = new ArrayList<>(Arrays.asList(readPrivilege, writePrivilege));
+        final List<Privilege> userPrivileges = new ArrayList<>(Arrays.asList(readPrivilege));
+        createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
+        createRoleIfNotFound("ROLE_USER", userPrivileges);
+
+        alreadySetup = true;
+    }
+
+    @Transactional
+    private Privilege createPrivilegeIfNotFound(final String name) {
+        Privilege privilege = privilegeDao.findByName(name);
+        if (privilege == null) {
+            privilege = new Privilege(name);
+            privilege = privilegeDao.save(privilege);
+        }
+        return privilege;
+    }
+
+    @Transactional
+    private Role createRoleIfNotFound(final String name, final Collection<Privilege> privileges) {
+        Role role = roleDao.findByName(name);
+        if (role == null) {
+            role = new Role(name);
+        }
+
+        role.setPrivileges(privileges);
+        role = roleDao.save(role);
+        return role;
+    }
+}

@@ -1,6 +1,7 @@
 package org.launchcode.controllers;
 
 import org.launchcode.models.User;
+import org.launchcode.models.data.RoleDao;
 import org.launchcode.models.data.UserDao;
 import org.launchcode.models.data.UserDto;
 import org.launchcode.models.forms.LoginEmailForm;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
+import java.util.Arrays;
 
 @Controller
 @RequestMapping(value = "user")
@@ -25,6 +27,9 @@ public class UserController {
 
     @Autowired
     private IUserService userService;
+
+    @Autowired
+    private RoleDao roleDao;
 
     @RequestMapping(value = "")
     public String index(Model model) {
@@ -57,7 +62,6 @@ public class UserController {
         }
 
         final User newUser = userService.registerNewUser(user);
-
         userDao.save(newUser);
         return "redirect:";
     }

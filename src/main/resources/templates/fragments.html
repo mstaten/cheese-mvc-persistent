@@ -32,8 +32,11 @@
 
 <div th:fragment="authentication">
     <div sec:authorize="isAuthenticated()">Text for authenticated users.</div>
-    <div sec:authorize="hasRole('USER')">Text for a user.</div>
-    <div sec:authorize="hasRole('ADMIN')">Text for an admin.</div>
+    <div sec:authorize="isFullyAuthenticated()">Text for FULLY authenticated users.</div>
+    <div sec:authorize="hasAuthority('USER')">Text for a user.</div>
+    <div sec:authorize="isAuthenticated()">User role(s):
+        <span sec:authentication="principal.authorities">username</span>
+    </div>
 </div>
 
 </body>
