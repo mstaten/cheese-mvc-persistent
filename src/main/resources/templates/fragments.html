@@ -6,14 +6,11 @@
     <!--Include following line to allow for mobile devices-->
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-
-    <!--
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous" />
-    -->
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet" crossorigin="anonymous" />
     <link th:href="@{/css/styles.css}" rel="stylesheet" />
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
 </head>
 <body>
 
@@ -28,16 +25,52 @@
             <input type="submit" value="Logout" />
         </form>
     </a>
+    <span sec:authorize="isAuthenticated()" class="float-right">
+        <!-- User-Info Popover -->
+        <a class="btn btn-warning" data-placement="top"
+           data-popover-content="#a1" data-toggle="popover"
+           data-trigger="focus" href="#"
+           sec:authentication="name">username</a>
+
+        <!-- Content for User-Info Popover -->
+        <div class="hidden" id="a1">
+          <div class="popover-heading" hidden="true">
+            <a href="#">My Account</a>
+          </div>
+
+          <div class="popover-body" hidden="true">
+            <a href="/menu">My Menus</a>
+          </div>
+        </div>
+    </span>
+
+    <script> <!-- JS for Popover -->
+        $(document).ready(function(){
+            $("[data-toggle=popover]").popover({
+                html : true,
+                content: function() {
+                  var content = $(this).attr("data-popover-content");
+                  return $(content).children(".popover-body").html();
+                },
+                title: function() {
+                  var title = $(this).attr("data-popover-content");
+                  return $(title).children(".popover-heading").html();
+                }
+            });
+        });
+    </script>
 </nav>
 
 <div th:fragment="authentication">
     <div sec:authorize="isAuthenticated()">Text for authenticated users.</div>
     <div sec:authorize="isFullyAuthenticated()">Text for FULLY authenticated users.</div>
     <div sec:authorize="hasAuthority('USER')">Text for a user.</div>
+    <div sec:authorize="hasAuthority('ADMIN')">Text for an admin.</div>
     <div sec:authorize="isAuthenticated()">User role(s):
         <span sec:authentication="principal.authorities">username</span>
     </div>
 </div>
+
 
 </body>
 </html>
