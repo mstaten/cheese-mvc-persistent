@@ -11,9 +11,10 @@ import org.springframework.stereotype.Component;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+
+/** Class to load roles and privileges on startup **/
 
 @Component
 public class RoleSetup implements ApplicationListener<ContextRefreshedEvent> {
@@ -28,7 +29,6 @@ public class RoleSetup implements ApplicationListener<ContextRefreshedEvent> {
 
     // API
 
-
     @Override
     @Transactional
     public void onApplicationEvent(final ContextRefreshedEvent event) {
@@ -41,8 +41,13 @@ public class RoleSetup implements ApplicationListener<ContextRefreshedEvent> {
         final Privilege writePrivilege = createPrivilegeIfNotFound("WRITE_PRIVILEGE");
 
         // create initial roles
-        final List<Privilege> adminPrivileges = new ArrayList<>(Arrays.asList(readPrivilege, writePrivilege));
-        final List<Privilege> userPrivileges = new ArrayList<>(Arrays.asList(readPrivilege));
+        List<Privilege> adminPrivileges = new ArrayList<>();
+        adminPrivileges.add(readPrivilege);
+        adminPrivileges.add(writePrivilege);
+
+        List<Privilege> userPrivileges = new ArrayList<>();
+        userPrivileges.add(readPrivilege);
+
         createRoleIfNotFound("ROLE_ADMIN", adminPrivileges);
         createRoleIfNotFound("ROLE_USER", userPrivileges);
 

@@ -62,8 +62,6 @@ public class CheeseController {
         }
 
         // find category with given id, set category of newCheese, save newCheese
-        // Category cat = categoryDao.findOne(categoryId);
-        // CHANGE
         newCheese.setCategory(categoryDao.findOne(categoryId));
         cheeseDao.save(newCheese);
         return "redirect:";

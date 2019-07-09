@@ -10,10 +10,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
-/** Class to register users, add to database **/
+/** Class to register users and add to database **/
 
 @Service
 @Transactional
@@ -45,12 +45,12 @@ public class UserService implements IUserService {
         final User user = new User();
         user.setUsername(userDto.getUsername());
         user.setEmail(userDto.getEmail());
+        user.setPassword(passwordEncoder.encode(userDto.getPassword()) );
 
-        //user.setRoles(Arrays.asList(roleDao.findByName("ROLE_USER")));
-        List<Role> roles = Arrays.asList(roleDao.findByName("ROLE_USER"));
+        List<Role> roles = new ArrayList<>();
+        roles.add(roleDao.findByName("ROLE_USER")); // automatically make role USER
         user.setRoles(roles);
 
-        user.setPassword( passwordEncoder.encode(userDto.getPassword()) );
         return userDao.save(user);
     }
 
