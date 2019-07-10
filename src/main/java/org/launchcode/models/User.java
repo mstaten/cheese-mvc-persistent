@@ -96,6 +96,7 @@ public class User implements Serializable {
         this.roles = roles;
     }
 
+    /** Other methods **/
     private void checkPassword() {
         if (!password.equals(verify) && verify!=null) {
             setVerify(null);

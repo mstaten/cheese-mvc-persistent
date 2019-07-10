@@ -16,7 +16,9 @@ public class Menu {
     @GeneratedValue
     private int id;
 
-    @ManyToMany(cascade=CascadeType.ALL)
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
+    @JoinTable(name = "menus_cheeses", joinColumns = @JoinColumn(name = "menu_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "cheese_id", referencedColumnName = "id"))
     private List<Cheese> cheeses;
 
     public Menu() {}

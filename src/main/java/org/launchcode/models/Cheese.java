@@ -26,7 +26,7 @@ public class Cheese {
     @ManyToOne
     private Category category;
 
-    @ManyToMany(mappedBy = "cheeses", cascade=CascadeType.ALL)
+    @ManyToMany(mappedBy = "cheeses", cascade = {CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REFRESH})
     private List<Menu> menus;
 
     public Cheese(String name, String description) {
@@ -62,5 +62,17 @@ public class Cheese {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public List<Menu> getMenus() {
+        return menus;
+    }
+
+    public void addMenu(Menu menu) {
+        menus.add(menu);
+    }
+
+    public void removeMenu(Menu menu) {
+        menus.remove(menu);
     }
 }
