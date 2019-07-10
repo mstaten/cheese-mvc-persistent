@@ -83,11 +83,11 @@ public class CheeseController {
     @RequestMapping(value = "remove", method = RequestMethod.POST)
     public String processRemoveCheeseForm(@RequestParam int[] cheeseIds) {
 
-        // iterate over checked cheeses from the form
+        // iterate over checked cheeses from the form and delete each
         for (int cheeseId : cheeseIds) {
             if (cheeseId != 0) {
-                // 0 is the default; see displayRemoveCheeseForm
-                cheeseDao.delete(cheeseId);
+
+                deleteCheeseCompletely(cheeseId);
             }
         }
 
@@ -132,7 +132,8 @@ public class CheeseController {
 
     @RequestMapping(value = "edit", method = RequestMethod.POST)
     public String processEditForm(@ModelAttribute @Valid Cheese modelCheese,
-                                  Errors errors, int id, Model model) {
+                                  Errors errors, int id, Model model,
+                                  String action) {
 
         if (errors.hasErrors()) {
             // find cheese w/given id already saved in cheeseDao
@@ -156,17 +157,44 @@ public class CheeseController {
             return "cheese/edit";
         }
 
-        // find cheese to be edited
-        Cheese theCheese = cheeseDao.findOne(id);
+        // find which button was clicked: update or delete
+        if (action.equals("delete")) {
 
-        // edit fields
-        theCheese.setName(modelCheese.getName());
-        theCheese.setDescription(modelCheese.getDescription());
-        theCheese.setCategory(modelCheese.getCategory());
+            deleteCheeseCompletely(id);
 
-        // save edits
-        cheeseDao.save(theCheese);
+        } else {
+
+            // find cheese to be edited
+            Cheese theCheese = cheeseDao.findOne(id);
+
+            // edit fields
+            theCheese.setName(modelCheese.getName());
+            theCheese.setDescription(modelCheese.getDescription());
+            theCheese.setCategory(modelCheese.getCategory());
+
+            // save edits
+            cheeseDao.save(theCheese);
+        }
+
         return "redirect:";
+    }
+
+    // DELETE CHEESE : MUST DELETE FROM ANY RELEVANT MENUS
+    private void deleteCheeseCompletely(int id) {
+
+        // get Cheese
+        Cheese cheese = cheeseDao.findOne(id);
+
+        // see if it's in any menus
+        List<Menu> menus = cheese.getMenus();
+
+        // remove cheese from each menu it's in
+        for (Menu menu : menus) {
+            menu.removeItem(cheese);
+        }
+
+        // delete
+        cheeseDao.delete(id);
     }
 
 }
