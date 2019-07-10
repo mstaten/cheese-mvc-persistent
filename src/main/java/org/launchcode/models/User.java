@@ -35,6 +35,10 @@ public class User implements Serializable {
                 inverseJoinColumns = @JoinColumn(name = "role_id", referencedColumnName = "id"))
     private Collection<Role> roles;
 
+    @OneToMany
+    @JoinColumn(name = "user_id")
+    private Collection<Menu> menus;
+
     /** Constructors **/
     public User() {}
 
@@ -94,6 +98,10 @@ public class User implements Serializable {
 
     public void setRoles(Collection<Role> roles) {
         this.roles = roles;
+    }
+
+    public Collection<Menu> getMenus() {
+        return menus;
     }
 
     /** Other methods **/

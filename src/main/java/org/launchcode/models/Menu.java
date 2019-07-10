@@ -21,6 +21,9 @@ public class Menu {
             inverseJoinColumns = @JoinColumn(name = "cheese_id", referencedColumnName = "id"))
     private List<Cheese> cheeses;
 
+    @ManyToOne
+    private User user;
+
     public Menu() {}
 
     public Menu(String name) {
@@ -49,5 +52,13 @@ public class Menu {
 
     public void removeItem(Cheese item) {
         cheeses.remove(item);
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

@@ -2,8 +2,10 @@ package org.launchcode.controllers;
 
 import org.launchcode.models.Cheese;
 import org.launchcode.models.Menu;
+import org.launchcode.models.User;
 import org.launchcode.models.data.CheeseDao;
 import org.launchcode.models.data.MenuDao;
+import org.launchcode.models.data.UserDao;
 import org.launchcode.models.forms.AddMenuItemForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -15,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
+import java.security.Principal;
 
 @Controller
 @RequestMapping("menu")
@@ -25,6 +28,9 @@ public class MenuController {
 
     @Autowired
     private MenuDao menuDao;
+
+    @Autowired
+    private UserDao userDao;
 
     @RequestMapping("")
     public String index(Model model) {
@@ -43,12 +49,16 @@ public class MenuController {
 
     @RequestMapping(value = "add", method = RequestMethod.POST)
     public String add(@ModelAttribute @Valid Menu menu, Errors errors,
-                      Model model) {
+                      Model model, Principal principal) {
         if (errors.hasErrors()) {
             model.addAttribute("title", "Add Menu");
             return "menu/add";
         }
 
+        // get user to add to menu
+        String username = principal.getName();
+        User user = userDao.findByUsername(username);
+        menu.setUser(user);
         menuDao.save(menu);
         return "redirect:view/" + menu.getId();
     }
