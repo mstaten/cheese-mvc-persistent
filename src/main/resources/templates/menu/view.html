@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org/" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity">
+<html lang="en" xmlns:th="http://www.thymeleaf.org/" >
     <head th:replace="fragments :: head"></head>
 
     <body class="container modal-body">
@@ -10,7 +10,7 @@
 
         <p th:unless="${menu.cheeses} and ${menu.cheeses.size()}" > no cheeses :( </p>
 
-        <p>Owner: <span sec:authentication="name"></span></p>
+        <p>Owner: <span th:text="${menu.user.username}"></span></p>
 
         <div th:if="${menu.cheeses} and ${menu.cheeses.size()}">Cheeses:
             <ul>
@@ -18,7 +18,10 @@
             </ul>
         </div>
 
-        <p><a th:href="'/menu/add-item/' + ${menu.id}">Add a Cheese</a></p>
+        <div>
+            <span><a th:href="'/menu/add-item/' + ${menu.id}">Add a Cheese</a></span> |
+            <span><a th:href="'/menu/edit/' + ${menu.id}">Edit Menu</a></span>
+        </div>
 
     </body>
 </html>

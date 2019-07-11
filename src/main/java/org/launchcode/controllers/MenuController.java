@@ -7,6 +7,7 @@ import org.launchcode.models.data.CheeseDao;
 import org.launchcode.models.data.MenuDao;
 import org.launchcode.models.data.UserDao;
 import org.launchcode.models.forms.AddMenuItemForm;
+import org.launchcode.models.forms.EditMenuForm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("menu")
@@ -42,6 +45,7 @@ public class MenuController {
 
     @RequestMapping(value = "add", method = RequestMethod.GET)
     public String add(Model model) {
+
         model.addAttribute(new Menu()); // new menu to bind to form
         model.addAttribute("title", "Add Menu");
         return "menu/add";
@@ -55,7 +59,7 @@ public class MenuController {
             return "menu/add";
         }
 
-        // get user to add to menu
+        // get user to add to new menu
         String username = principal.getName();
         User user = userDao.findByUsername(username);
         menu.setUser(user);
@@ -78,6 +82,7 @@ public class MenuController {
 
         // find menu w/given id
         Menu menu = menuDao.findOne(menuId);
+
         // get all cheeses
         Iterable<Cheese> cheeses = cheeseDao.findAll();
 
@@ -93,8 +98,7 @@ public class MenuController {
     }
 
     @RequestMapping(value = "add-item", method = RequestMethod.POST)
-    public String addItem(@ModelAttribute AddMenuItemForm form, Errors errors,
-                          Model model) {
+    public String addItem(@ModelAttribute AddMenuItemForm form, Errors errors) {
         if (errors.hasErrors()) {
             return "menu/add-item";
         }
@@ -108,5 +112,56 @@ public class MenuController {
         menuDao.save(menu);
         return "redirect:view/" + menu.getId();
 
+    }
+
+    @RequestMapping(value = "edit/{menuId}", method = RequestMethod.GET)
+    public String edit(@PathVariable int menuId, Model model) {
+
+        // find menu w/given id
+        Menu menu = menuDao.findOne(menuId);
+
+        // get all cheeses
+        Iterable<Cheese> allCheeses = cheeseDao.findAll();
+
+        // get all cheeses currently in menu, to preselect in the view
+        List<Cheese> preselectCheeses = menu.getCheeses();
+
+        // create menu form
+        EditMenuForm form = new EditMenuForm(menuId, allCheeses, preselectCheeses);
+
+        // need checkedId as a checkbox on our form that is always checked,
+        // in case user submits form without checking a box
+        int checkedId = 0;
+        String title = "Edit menu: " + menu.getName();
+
+        model.addAttribute("checkedId", checkedId);
+        model.addAttribute("form", form);
+        model.addAttribute("title", title);
+        return "menu/edit";
+    }
+
+    @RequestMapping(value = "edit", method = RequestMethod.POST)
+    public String edit(@ModelAttribute EditMenuForm form) {
+
+        // find relevant menu
+        Menu menu = menuDao.findOne(form.getMenuId());
+
+        // get checked cheese ids from the form
+        int[] formCheckedCheeseIds = form.getCheckedCheeseIds();
+
+        // delete cheeses currently in menu
+        menu.setCheeses(new ArrayList<>());
+
+        // iterate over checked cheese ids, add to menu
+        for (int cheeseId : formCheckedCheeseIds) {
+            if (cheeseId != 0) { // 0 is default
+                // get cheese, add to menu
+                Cheese cheese = cheeseDao.findOne(cheeseId);
+                menu.addItem(cheese);
+            }
+        }
+
+        menuDao.save(menu);
+        return "redirect:view/" + menu.getId();
     }
 }
