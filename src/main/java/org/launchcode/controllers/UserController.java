@@ -1,5 +1,6 @@
 package org.launchcode.controllers;
 
+import org.launchcode.error.UserAlreadyExistsException;
 import org.launchcode.models.User;
 import org.launchcode.models.data.UserDao;
 import org.launchcode.models.data.UserDto;
@@ -44,6 +45,7 @@ public class UserController {
     public String add(@ModelAttribute @Valid UserDto user,
                       Errors errors, Model model) {
 
+        // if user input is invalid
         if (errors.hasErrors()) {
             if (errors.hasFieldErrors("email")) {
                 user.setEmail("");
@@ -56,7 +58,22 @@ public class UserController {
             return "user/add";
         }
 
-        final User newUser = userService.registerNewUser(user);
+        User newUser;
+
+        // try to register new user, see if username / email already exists
+        try {
+            // might throw UserAlreadyExists exception
+            newUser = userService.registerNewUser(user);
+
+        } catch (UserAlreadyExistsException ex) {
+
+            // display add form again with error
+            model.addAttribute("title", "Add User");
+            model.addAttribute("ex", ex);
+            return "user/add";
+        }
+
+        // only save if username and email don't already exist
         userDao.save(newUser);
         return "redirect:";
     }

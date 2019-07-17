@@ -8,9 +8,9 @@
 
         <nav th:replace="fragments :: navigation"></nav>
 
-        <p th:unless="${menu.cheeses} and ${menu.cheeses.size()}" > no cheeses :( </p>
-
         <p>Owner: <span th:text="${menu.user.username}"></span></p>
+
+        <p th:unless="${menu.cheeses} and ${menu.cheeses.size()}" > no cheeses :( </p>
 
         <div th:if="${menu.cheeses} and ${menu.cheeses.size()}">Cheeses:
             <ul>

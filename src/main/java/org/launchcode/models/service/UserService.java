@@ -1,5 +1,6 @@
 package org.launchcode.models.service;
 
+import org.launchcode.error.UserAlreadyExistsException;
 import org.launchcode.models.Role;
 import org.launchcode.models.User;
 import org.launchcode.models.data.RoleDao;
@@ -28,17 +29,27 @@ public class UserService implements IUserService {
     @Autowired
     private RoleDao roleDao;
 
-    // register new user
+    /**
+     * Register new user
+     *
+     * @param userDto
+     * @return user
+     * @throws UserAlreadyExistsException
+     */
     @Override
-    public User registerNewUser(final UserDto userDto) {
+    public User registerNewUser(final UserDto userDto) throws UserAlreadyExistsException {
 
-        if (emailExists(userDto.getEmail())) {
-            // if email exists in database already
-            throw new RuntimeException();
-        }
         if (usernameExists(userDto.getUsername())) {
             // if username already exists
-            throw new RuntimeException();
+            String username = userDto.getUsername();
+            userDto.setUsername("");
+            throw new UserAlreadyExistsException("There is already an account with username: " + username);
+        }
+        if (emailExists(userDto.getEmail())) {
+            // if email exists in database already
+            String email = userDto.getEmail();
+            userDto.setEmail("");
+            throw new UserAlreadyExistsException("There is already an account with email address: " + email);
         }
 
         // actually create the new user w/given fields

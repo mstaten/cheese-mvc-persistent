@@ -6,6 +6,8 @@
 
 <nav th:replace="fragments :: navigation"></nav>
 
+<p th:if="${ex}" th:text="${ex.getLocalizedMessage()}">binding result - show localized message</p>
+
 <form method="post" style="max-width:600px;" th:object="${userDto}" >
 
     <label><input th:field="*{username}"    placeholder="username" autofocus="autofocus" onfocus="this.select()" /></label>
