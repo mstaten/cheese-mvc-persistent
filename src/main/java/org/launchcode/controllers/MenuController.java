@@ -42,6 +42,19 @@ public class MenuController {
         return "menu/index";
     }
 
+    @RequestMapping("{userId}")
+    public String viewMenusByUser(@PathVariable int userId, Model model) {
+        List<Menu> menus = new ArrayList<>();
+        for (Menu menu : menuDao.findAll()) {
+            if (menu.getUser().getId() == userId) {
+                menus.add(menu);
+            }
+        }
+        model.addAttribute("menus", menus);
+        model.addAttribute("title", "Menus by " + userDao.findById(userId).getUsername());
+        return "menu/index";
+    }
+
     @RequestMapping(value = "add", method = RequestMethod.GET)
     public String add(Model model) {
 
