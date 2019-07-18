@@ -76,12 +76,19 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User getUserById(Integer id) {
+    public User findUserById(Integer id) {
         return userDao.findOne(id);
     }
 
-    private Boolean emailExist(final String email) {
-        return userDao.findByEmail(email) != null;
+    @Override
+    public void changeUserPassword(final User user, final String password) {
+        user.setPassword(passwordEncoder.encode(password));
+        userDao.save(user);
+    }
+
+    @Override
+    public Boolean checkPasswords(final User user, final String oldPassword) {
+        return passwordEncoder.matches(oldPassword, user.getPassword());
     }
 
     // getUser

@@ -12,7 +12,11 @@ public interface IUserService {
 
     User findUserByEmail(final String email);
 
-    User getUserById(final Integer id);
+    User findUserById(final Integer id);
+
+    Boolean checkPasswords(final User user, final String oldPassword);
+
+    void changeUserPassword(final User user, final String password);
 
     // getUser
 

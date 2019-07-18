@@ -35,7 +35,7 @@
         <!-- Content for User-Info Popover -->
         <div class="hidden" id="a1">
           <div class="popover-heading" hidden="true">
-            <a href="#">My Account</a>
+            <a th:href="'/user/profile/' + ${#authentication.getPrincipal().getId()}">My Account</a>
           </div>
 
           <div class="popover-body" hidden="true">

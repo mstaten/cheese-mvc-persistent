@@ -2,6 +2,7 @@ package org.launchcode.controllers;
 
 import org.launchcode.error.UserAlreadyExistsException;
 import org.launchcode.models.User;
+import org.launchcode.models.data.PasswordDto;
 import org.launchcode.models.data.UserDao;
 import org.launchcode.models.data.UserDto;
 import org.launchcode.models.forms.LoginEmailForm;
@@ -12,10 +13,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import javax.validation.Valid;
+import java.security.Principal;
 
 @Controller
 @RequestMapping(value = "user")
@@ -160,6 +163,53 @@ public class UserController {
     public String expiredSession(Model model) {
         model.addAttribute("title", "Expired Session");
         return "user/expiredSession";
+    }
+
+    @RequestMapping(value = "profile/{userId}", method = RequestMethod.GET)
+    public String showProfile(@PathVariable int userId, Model model,
+                              Principal principal) {
+
+        User user = userDao.findByUsername(principal.getName());
+        if (userId != user.getId()) {
+            // doesn't belong to current user, shouldn't be able to view it
+            return "redirect:/user/unauthorized";
+        }
+
+        model.addAttribute("passwordDto", new PasswordDto());
+        model.addAttribute("title", "My Account");
+        return "user/profile";
+    }
+
+    @RequestMapping(value = "profile/{userId}", method = RequestMethod.POST)
+    public String changePassword(@PathVariable int userId,
+                                 @ModelAttribute @Valid PasswordDto passwordDto,
+                                 Errors errors, Model model) {
+
+        if (errors.hasErrors()) {
+            model.addAttribute("title", "My Account");
+            return "user/profile";
+        }
+
+        final User user = userDao.findById(userId); // should probably do try-catch here or sth
+
+        // see if old passwords match
+        if (userService.checkPasswords(user, passwordDto.getOldPassword())) {
+            // if true, may change password
+            userService.changeUserPassword(user, passwordDto.getNewPassword());
+            model.addAttribute("successMessage", "Password updated!");
+        } else {
+            // passwords don't match, may not change
+            model.addAttribute("failureMessage", "Incorrect current password");
+        }
+
+        model.addAttribute("title", "My Account");
+        return "user/profile";
+    }
+
+    @RequestMapping(value = "unauthorized")
+    public String unauthorized(Model model) {
+        model.addAttribute("title", "Unauthorized");
+        return "user/unauthorized";
     }
 
 }
