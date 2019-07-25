@@ -15,11 +15,13 @@
            value="${_csrf.token}"/>
 
     <label><input type="submit" value="Login" class="btn btn-warning"/></label>
+    <small th:text="${msg}" class="alert alert-info"></small>
 
     <div>
         <h5 th:if="${loginEmailForm.customError} != null">
             <br />
             <small th:field="*{customError}" th:text="*{customError}" class="alert alert-danger"></small>
+            <small th:text="${msg}" class="alert alert-danger"></small>
         </h5>
         <br />
         <h5><small th:errors="*{email}"  class="alert alert-danger"></small></h5>

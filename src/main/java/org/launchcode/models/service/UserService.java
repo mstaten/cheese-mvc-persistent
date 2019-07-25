@@ -1,5 +1,6 @@
 package org.launchcode.models.service;
 
+import org.launchcode.error.PasswordsMismatchException;
 import org.launchcode.error.UserAlreadyExistsException;
 import org.launchcode.models.Role;
 import org.launchcode.models.User;
@@ -37,7 +38,7 @@ public class UserService implements IUserService {
      * @throws UserAlreadyExistsException
      */
     @Override
-    public User registerNewUser(final UserDto userDto) throws UserAlreadyExistsException {
+    public User registerNewUser(final UserDto userDto) throws UserAlreadyExistsException, PasswordsMismatchException {
 
         if (usernameExists(userDto.getUsername())) {
             // if username already exists
@@ -52,6 +53,12 @@ public class UserService implements IUserService {
             throw new UserAlreadyExistsException("There is already an account with email address: " + email);
         }
 
+        // check if password and verify string match
+        if (!verifyNewUserPasswords(userDto.getPassword(), userDto.getVerify())) {
+            // if don't match, return error
+            throw new PasswordsMismatchException("Passwords don't match");
+        }
+
         // actually create the new user w/given fields
         final User user = new User();
         user.setUsername(userDto.getUsername());
@@ -63,6 +70,10 @@ public class UserService implements IUserService {
         user.setRoles(roles);
 
         return userDao.save(user);
+    }
+
+    private boolean verifyNewUserPasswords(String password, String verify) {
+        return (password.equals(verify));
     }
 
     @Override

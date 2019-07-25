@@ -1,5 +1,6 @@
 package org.launchcode.controllers;
 
+import org.launchcode.error.PasswordsMismatchException;
 import org.launchcode.error.UserAlreadyExistsException;
 import org.launchcode.models.User;
 import org.launchcode.models.data.PasswordDto;
@@ -17,6 +18,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import java.security.Principal;
 
@@ -68,7 +71,7 @@ public class UserController {
             // might throw UserAlreadyExists exception
             newUser = userService.registerNewUser(user);
 
-        } catch (UserAlreadyExistsException ex) {
+        } catch (UserAlreadyExistsException | PasswordsMismatchException ex) {
 
             // display add form again with error
             model.addAttribute("title", "Add User");
@@ -81,8 +84,26 @@ public class UserController {
         return "redirect:";
     }
 
+    @RequestMapping(value = "login/username?error=true", method = RequestMethod.GET)
+    public String loginUsernameAfterError(Model model) {
+        // if there's an error message, show it
+        model.addAttribute("errorMessage", "Bad creds, babe");
+        model.addAttribute("title", "Login");
+        model.addAttribute("loginUsernameForm", new LoginUsernameForm());
+        return "user/loginUsername";
+    }
+
     @RequestMapping(value = "login/username", method = RequestMethod.GET)
-    public String loginUsername(Model model) {
+    public String loginUsername(Model model, Principal principal, HttpServletRequest request, HttpServletResponse response) {
+
+        // if already logged in, redirect to cheese index
+        if (principal != null) {
+            return "redirect:/cheese";
+        }
+        //Object msg = request.getAttribute("message");
+        //request.getSession();
+        //String msg = request.getSession().getAttribute("msg")
+
         model.addAttribute("title", "Login");
         model.addAttribute("loginUsernameForm", new LoginUsernameForm());
         return "user/loginUsername";
@@ -106,15 +127,27 @@ public class UserController {
         User thisUser = userDao.findByUsername(form.getUsername());
 
         // check whether username exists, check for correct username-password combo
-        if (thisUser == null || !form.getPassword().equals(thisUser.getPassword())) {
+        /*if (thisUser == null || !form.getPassword().equals(thisUser.getPassword())) {
             form.setCustomError("Invalid username and password");
             model.addAttribute("title", "Login");
             return "user/loginUsername";
-        }
+        }*/
 
         // all correct
         // do something HERE to keep user logged in
         return "redirect:";
+    }
+
+    @RequestMapping(value = "login/error")
+    public String loginError(Model model, HttpServletRequest request) {
+        Object msg = request.getAttribute("msg");
+        //Object msg = request.getSession().getAttribute("msg");
+        LoginUsernameForm form = new LoginUsernameForm();
+        form.setCustomError("bad creds babe");
+
+        model.addAttribute("title", "Login");
+        model.addAttribute("loginUsernameForm", form);
+        return "user/loginUsername";
     }
 
     @RequestMapping(value = "login/email", method = RequestMethod.GET)
@@ -142,7 +175,7 @@ public class UserController {
         User thisUser = userDao.findByEmail(form.getEmail());
 
         // check whether email exists, check for correct email-password combo
-        if (thisUser == null || !form.getPassword().equals(thisUser.getPassword())) {
+        if (thisUser == null || userService.checkPasswords(thisUser, form.getPassword())) {
             form.setCustomError("Invalid email and password");
             model.addAttribute("title", "Login by Email");
             return "user/loginEmail";

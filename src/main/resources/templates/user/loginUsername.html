@@ -17,6 +17,7 @@
         <h5 th:if="${loginUsernameForm.customError} != null">
             <br />
             <small th:field="*{customError}" th:text="*{customError}" class="alert alert-danger"></small>
+            <small th:text="${errorMessage}" class="alert alert-danger"></small>
         </h5>
         <br />
         <h5><small th:errors="*{username}"  class="alert alert-danger"></small></h5>

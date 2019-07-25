@@ -1,5 +1,6 @@
 package org.launchcode.config;
 
+import org.launchcode.CustomAuthenticationFailureHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -15,6 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.session.HttpSessionEventPublisher;
 import org.thymeleaf.extras.springsecurity4.dialect.SpringSecurityDialect;
 
@@ -41,7 +43,7 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
         http
                 .csrf().disable()
                 .authorizeRequests()
-                    .antMatchers("/css/**", "/cheese", "/category", "/user/add", "/user/login/username", "/user/login/email").permitAll()
+                    .antMatchers("/css/**", "/cheese", "/category", "/user/add", "/user/login/**").permitAll()
                     //.antMatchers("/admin/**").hasRole("ADMIN")
                     //.antMatchers("/user/**").hasAnyRole("USER", "ADMIN")
                     .anyRequest().authenticated()
@@ -49,7 +51,8 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
                 .formLogin()
                     .loginPage("/user/login/username")
                         .defaultSuccessUrl("/cheese")
-                        //.failureUrl("/user/login-error")
+                        .failureHandler(customAuthenticationHandler())
+                        //.failureUrl("/user/login/error")
                         .permitAll()
                     .and()
                 .logout()
@@ -95,6 +98,11 @@ public class AppSecurityConfig extends WebSecurityConfigurerAdapter {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder(11);
+    }
+
+    @Bean
+    public AuthenticationFailureHandler customAuthenticationHandler(){
+        return new CustomAuthenticationFailureHandler();
     }
 
     @Bean
